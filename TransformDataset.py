@@ -1,5 +1,3 @@
-import PrepareDataset as dataset
-
 import torch
 import torch.utils.data
 import numpy as np
@@ -23,5 +21,7 @@ val_transforms = transforms.Compose([
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ])
 
-train_dataset = torchvision.datasets.ImageFolder(dataset.train_dir, train_transforms)
-val_dataset = torchvision.datasets.ImageFolder(dataset.val_dir, val_transforms)
+def transform_dataset(dataset_dir, dataset_transforms):
+    transformed_dataset = torchvision.datasets.ImageFolder(dataset_dir, dataset_transforms)
+    
+    return transformed_dataset

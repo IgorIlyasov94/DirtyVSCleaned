@@ -22,11 +22,8 @@ class ImageFolderWithPaths(torchvision.datasets.ImageFolder):
             return tuple_with_path
 
 def test_model(val_transforms, batch_size, model, device):
-    test_dir = 'test'
-
-    shutil.copytree(os.path.join(data_root, 'test'), os.path.join(test_dir, 'unknown'))
-
-    test_dataset = ImageFolderWithPaths('/kaggle/working/test', val_transforms)
+    
+    test_dataset = ImageFolderWithPaths('test', val_transforms)
 
     test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
@@ -50,7 +47,7 @@ def test_model(val_transforms, batch_size, model, device):
     submission_df = pd.DataFrame.from_dict({'id': test_img_paths, 'label': test_predictions})
 
     submission_df['label'] = submission_df['label'].map(lambda pred: 'dirty' if pred > 0.5 else 'cleaned')
-    submission_df['id'] = submission_df['id'].str.replace('/kaggle/working/test/unknown/', '')
+    submission_df['id'] = submission_df['id'].str.replace('test/unknown/', '')
     submission_df['id'] = submission_df['id'].str.replace('.jpg', '')
 
     submission_df.set_index('id', inplace=True)

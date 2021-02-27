@@ -22,7 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DirtyVSCleaned.py" />
-    <Compile Include="PrepareDataset.py">
+    <Compile Include="PrepareDatasetStorage.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ShowDataset.py">

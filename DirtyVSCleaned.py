@@ -9,19 +9,32 @@ import copy
 
 from tqdm import tqdm
 
-import PrepareDataset as dataset
+import PrepareDatasetStorage
 import TransformDataset
 import ShowDataset
 import TrainModel
 import TestModel
 
 if __name__ == '__main__':
+    data_root = 'plates'
+
+    train_dir = 'train'
+    val_dir = 'val'
+    test_dir = 'test'
+
+    class_names = ['cleaned', 'dirty']
+
+    #PrepareDatasetStorage.prepare_dataset_storage(data_root, train_dir, val_dir, test_dir, class_names)
+
+    train_dataset = TransformDataset.transform_dataset(train_dir, TransformDataset.train_transforms)
+    val_dataset = TransformDataset.transform_dataset(val_dir, TransformDataset.val_transforms)
+
     batch_size = 8
 
-    train_dataloader = torch.utils.data.DataLoader(TransformDataset.train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
-    val_dataloader = torch.utils.data.DataLoader(TransformDataset.val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+    train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+    val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
-    #ShowDataset.show_dataset(val_dataloader, dataset.class_names)
+    #ShowDataset.show_dataset(val_dataloader, class_names)
 
     model = models.resnet18(pretrained=True)
 
