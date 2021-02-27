@@ -1,32 +1,45 @@
-import PrepareDataset as dataset
-
 import torch
 import torch.utils.data
 import numpy as np
 import torchvision
+import torchvision.models as models
 import matplotlib.pyplot as plt
 import time
 import copy
 
-from torchvision import transforms, models
+from tqdm import tqdm
 
-train_transforms = transforms.Compose([
-    transforms.RandomResizedCrop(224),
-    transforms.RandomHorizontalFlip(),
-    transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ])
+import PrepareDataset as dataset
+import TransformDataset
+import ShowDataset
+import TrainModel
+import TestModel
 
-val_transforms = transforms.Compose([
-    transforms.Resize(224, 224),
-    transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ])
+if __name__ == '__main__':
+    batch_size = 8
 
-train_dataset = torchvision.datasets.ImageFolder(dataset.train_dir, train_transforms)
-val_dataset = torchvision.datasets.ImageFolder(dataset.val_dir, val_transforms)
+    train_dataloader = torch.utils.data.DataLoader(TransformDataset.train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+    val_dataloader = torch.utils.data.DataLoader(TransformDataset.val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
-batch_size = 8
+    #ShowDataset.show_dataset(val_dataloader, dataset.class_names)
 
-train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=batch_size)
-val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=batch_size)
+    model = models.resnet18(pretrained=True)
+
+    for param in model.parameters():
+        param.requires_grad = False
+
+    model.fc = torch.nn.Linear(model.fc.in_features, 2)
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    model = model.to(device)
+
+    loss = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=1.0e-3)
+
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
+
+
+    TrainModel.train_model(model, loss, optimizer, scheduler, 100, device, train_dataloader, val_dataloader)
+
+
+    TestModel.test_model(TransformDataset.val_transforms, batch_size, model, device)

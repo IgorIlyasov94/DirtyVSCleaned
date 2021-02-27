@@ -25,6 +25,18 @@
     <Compile Include="PrepareDataset.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ShowDataset.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestModel.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TrainModel.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TransformDataset.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
